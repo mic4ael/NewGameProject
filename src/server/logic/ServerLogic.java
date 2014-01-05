@@ -17,7 +17,7 @@ public final class ServerLogic extends Thread {
 	private ServerSocket serverSocket;
 	private String ipAddress; // in case player wants to create a server available to the outside world
 	private int portNumber;
-	private boolean isRunning = true;
+	private volatile boolean isRunning = true;
 	
 	public ServerLogic(ServerType type, int portNumber) throws IOException {
 		this.portNumber = portNumber;
@@ -37,9 +37,12 @@ public final class ServerLogic extends Thread {
 	
 	@Override
 	public void run() {
+		System.out.println("Server Started!");
+		
 		while(isRunning) {
-			
 		}
+		
+		System.out.println("Server Stopped!");
 	}
 	
 	private void getPublicIp() throws IOException {

@@ -4,7 +4,7 @@ public interface ServerParameters {
 	
 	// ints
 	public static final int SERVER_WINDOW_WIDTH = 400;
-	public static final int SERVER_WINDOW_HEIGHT = 100;
+	public static final int SERVER_WINDOW_HEIGHT = 140;
 	public static final int MAX_ROOMS = 20;
 	public static final int MAX_PLAYERS_PER_ROOM = 15;
 	public static final int MAX_PORT_NUMBER = 65535;

@@ -34,6 +34,7 @@ public class ServerWindow extends JFrame {
 	private ServerLogic server;
 	private ServerType chosenServerType = null;
 	private JTextField port;
+	private JButton stopServer;
 	
 	public ServerWindow() {
 		this(ServerParameters.SERVER_WINDOW_WIDTH, ServerParameters.SERVER_WINDOW_HEIGHT);
@@ -48,6 +49,18 @@ public class ServerWindow extends JFrame {
 		serverState.setBorder(BorderFactory.createEtchedBorder());
 		port = new JTextField("Port Number");
 		servers = new ButtonGroup();
+		stopServer = new JButton("Stop Server");
+		
+		stopServer.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (server != null && server.isRunning()) {
+					server.stopServer();
+					setServerState();
+				}
+			}
+		});
+		
 		pServer = new JRadioButton("Public Server");
 		pServer.addActionListener(new ActionListener() {
 			@Override
@@ -80,6 +93,7 @@ public class ServerWindow extends JFrame {
 							throw new WrongPortException("Port must be between 1024 and 65535");
 						
 						server = new ServerLogic(chosenServerType, portValue);
+						server.start();
 						setServerState();
 						
 					} catch (IOException e) {
@@ -119,7 +133,7 @@ public class ServerWindow extends JFrame {
 		buttons.add(pServer);
 		buttons.add(lServer);
 		buttons.add(port);
-		
+		buttons.add(stopServer);
 		pane.add(serverState, BorderLayout.NORTH);
 		pane.add(buttons, BorderLayout.CENTER);
 		pane.add(createServerButton, BorderLayout.SOUTH);
