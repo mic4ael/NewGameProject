@@ -5,7 +5,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ClientLogic extends Thread {
-	private static final long serialVersionUID = 5019702721920582709L;
 	private String host;
 	private int portNumber;
 	private Socket socket;
