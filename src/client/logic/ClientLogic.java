@@ -14,4 +14,16 @@ public class ClientLogic extends Thread {
 		this.portNumber = portNumber;
 		this.socket = new Socket(host, portNumber);
 	}
+	
+	public String getHost() {
+		return host;
+	}
+	
+	public int portNumber() {
+		return portNumber;
+	}
+	
+	public Socket getSocket() {
+		return socket;
+	}
 }

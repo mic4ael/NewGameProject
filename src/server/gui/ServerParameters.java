@@ -19,4 +19,7 @@ public interface ServerParameters {
 	public static final String NO_TYPE_CHOSEN = "You have not chosen the type of the server!";
 	public static final String WRONG_PORT = "Wrong value for the port!";
 	public static final String NO_PORT_SPECIFIED = "No port has been specified!";
+	public static final String SERVER_STATE = "Server State: ";
+	public static final String ONE_SERVER_ONLY = "Only one server can be running at the same time!";
+	public static final String ALREADY_STARTED = "Server has already been started!";
 }

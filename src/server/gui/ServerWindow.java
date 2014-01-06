@@ -44,7 +44,7 @@ public class ServerWindow extends JFrame {
 		// initialize variables and listeners
 		windowSize = new Dimension(width, height);
 		pane = getContentPane();
-		serverState = new JLabel("Server State: stopped");
+		serverState = new JLabel(ServerParameters.SERVER_STATE + " stopped");
 		serverState.setHorizontalAlignment(JLabel.CENTER);
 		serverState.setBorder(BorderFactory.createEtchedBorder());
 		port = new JTextField("Port Number");
@@ -55,8 +55,13 @@ public class ServerWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if (server != null && server.isRunning()) {
-					server.stopServer();
-					setServerState();
+					try {
+						server.stopServer();
+						setServerState();
+						server = null;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -92,14 +97,21 @@ public class ServerWindow extends JFrame {
 						if (portValue < ServerParameters.MIN_PORT_NUMBER || portValue > ServerParameters.MAX_PORT_NUMBER)
 							throw new WrongPortException("Port must be between 1024 and 65535");
 						
-						server = new ServerLogic(chosenServerType, portValue);
-						server.start();
-						setServerState();
+						if (server == null) {
+							server = new ServerLogic(chosenServerType, portValue);
+						}
 						
+						if (!server.isRunning()) {
+							server.start();
+							setServerState();
+						} else {
+							JOptionPane.showMessageDialog(null, ServerParameters.ALREADY_STARTED);
+						}
+								
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (WrongPortException | NumberFormatException ex) {
-						JOptionPane.showMessageDialog(null, new String(ServerParameters.WRONG_PORT));
+						JOptionPane.showMessageDialog(null, ServerParameters.WRONG_PORT);
 					}
 					
 				}
@@ -116,7 +128,9 @@ public class ServerWindow extends JFrame {
 	}
 	
 	private void setServerState() {
-		serverState.setText("Server State: " + (server.isRunning() == true ? "running" : "stopped"));
+		String state = ServerParameters.SERVER_STATE;
+		
+		serverState.setText(state + (server.isRunning() == true ? "running on port " + server.getPortNumber() : "stopped"));
 		serverState.repaint();
 	}
 	
@@ -134,6 +148,7 @@ public class ServerWindow extends JFrame {
 		buttons.add(lServer);
 		buttons.add(port);
 		buttons.add(stopServer);
+		
 		pane.add(serverState, BorderLayout.NORTH);
 		pane.add(buttons, BorderLayout.CENTER);
 		pane.add(createServerButton, BorderLayout.SOUTH);

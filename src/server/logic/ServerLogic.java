@@ -5,6 +5,7 @@ import helperclasses.Room;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.BindException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -17,7 +18,7 @@ public final class ServerLogic extends Thread {
 	private ServerSocket serverSocket;
 	private String ipAddress; // in case player wants to create a server available to the outside world
 	private int portNumber;
-	private volatile boolean isRunning = true;
+	private volatile boolean isRunning = false;
 	
 	public ServerLogic(ServerType type, int portNumber) throws IOException {
 		this.portNumber = portNumber;
@@ -28,15 +29,22 @@ public final class ServerLogic extends Thread {
 				break;
 			case PUBLIC:
 				getPublicIp();
+				break;
 		}
 		
 		System.out.println(ipAddress);
 		serverSocket = new ServerSocket();
-		serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
+		
+		try {
+			serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
+		} catch  (BindException ex) {
+			
+		}
 	}
 	
 	@Override
 	public void run() {
+		isRunning = true;
 		System.out.println("Server Started!");
 		
 		while(isRunning) {
@@ -68,8 +76,9 @@ public final class ServerLogic extends Thread {
 		return rooms;
 	}
 	
-	public void stopServer() {
+	public void stopServer() throws IOException {
 		isRunning = false;
+		serverSocket.close();
 	}
 	
 	public boolean isRunning() {
