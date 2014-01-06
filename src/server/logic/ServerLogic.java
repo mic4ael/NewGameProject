@@ -47,6 +47,10 @@ public final class ServerLogic extends Thread {
 				cl.sendToClient(msg);
 		}
 		
+		public void stopJob() {
+			isRunning = false;
+		}
+		
 		@Override
 		public void run() {
 			System.out.println("Client Worker started");
@@ -137,6 +141,11 @@ public final class ServerLogic extends Thread {
 	
 	public void stopServer() throws IOException {
 		isRunning = false;
+		
+		// stop all workers from communcating with the clients
+		for(ClientWorker cl : clients)
+			cl.stopJob();
+		
 		serverSocket.close();
 	}
 	
