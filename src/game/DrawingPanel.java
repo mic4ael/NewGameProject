@@ -4,8 +4,12 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
 
 import javax.swing.JPanel;
+
+import server.logic.MessageType;
+import client.logic.ClientLogic;
 
 public class DrawingPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -13,8 +17,11 @@ public class DrawingPanel extends JPanel {
 	private Graphics offscreenG;
 	private int curX = -1; // on first repaint there is a dot at (0,0), so this is to prevent it
 	private int curY = -1;
+	private ClientLogic clientLogic;
 	
-	public DrawingPanel() {
+	public DrawingPanel(final ClientLogic clientLogic) {
+		this.clientLogic = clientLogic;
+		
 		// add drawing capability
 		addMouseMotionListener(new MouseMotionListener() {
 			@Override
@@ -25,9 +32,22 @@ public class DrawingPanel extends JPanel {
 				curX = evt.getX();
 				curY = evt.getY();
 				
+				try {
+					clientLogic.sendMessage(MessageType.DRAW, evt.getX(), evt.getY());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
 				repaint();
 			}
 		});
+	}
+	
+	public synchronized void setXY(int x, int y) {
+		curX = x;
+		curY = y;
+		
+		repaint();
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package client.gui;
 
+import game.GameWindow;
 import helperclasses.NoValueProvidedException;
 import helperclasses.WrongPortException;
 
@@ -14,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import client.logic.ClientLogic;
 
@@ -44,7 +46,13 @@ public class ClientWindow extends JFrame {
 					validateInput();
 					
 					clientLogic = new ClientLogic(hostValue, portValue);
-					clientLogic.start();
+					
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							new GameWindow(clientLogic);
+						}
+					});
 					
 				} catch (NoValueProvidedException e) {
 					JOptionPane.showMessageDialog(null, ClientParameters.NO_VALUES);

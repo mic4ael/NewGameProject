@@ -1,27 +1,78 @@
 package server.logic;
 
-import helperclasses.Room;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.BindException;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ServerLogic extends Thread {
-	private List<Room> rooms;
+	private volatile List<ClientWorker> clients;
 	private ServerSocket serverSocket;
 	private String ipAddress; // in case player wants to create a server available to the outside world
 	private int portNumber;
 	private volatile boolean isRunning = false;
 	
+	private class ClientWorker extends Thread {
+		private Socket clientSocket;
+		private ObjectInputStream inObject;
+		private ObjectOutputStream outObject;
+		private boolean isRunning = true;
+		
+		private ClientWorker(Socket clientSocket) throws IOException {
+			this.clientSocket = clientSocket;
+			inObject = new ObjectInputStream(clientSocket.getInputStream());
+			outObject = new ObjectOutputStream(clientSocket.getOutputStream());
+		}
+		
+		private void sendToClient(Message msg) {
+			try {
+				this.outObject.writeObject(msg);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		private void send(Message msg) {
+			for(ClientWorker cl : clients)
+				cl.sendToClient(msg);
+		}
+		
+		@Override
+		public void run() {
+			System.out.println("Client Worker started");
+			Message msg = null;
+			
+			while(isRunning) {
+				try {
+					msg = (Message)inObject.readObject();
+					
+					switch(msg.getMessageType()) {
+					case DRAW:
+						send(msg);
+					}
+					
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			System.out.println("Client Worker stopped");
+		}
+	}
+	
 	public ServerLogic(ServerType type, int portNumber) throws IOException {
 		this.portNumber = portNumber;
+		clients = new ArrayList<ClientWorker>();
 		
 		switch(type) {
 			case LOCAL:
@@ -48,7 +99,10 @@ public final class ServerLogic extends Thread {
 		
 		while(isRunning) {
 			try {
-				serverSocket.accept();
+				ClientWorker connectedClient = new ClientWorker(serverSocket.accept());
+				clients.add(connectedClient);
+				connectedClient.start();
+				
 				System.out.println("Client Connected");
 			} catch (IOException e) {
 				break;
@@ -77,8 +131,8 @@ public final class ServerLogic extends Thread {
 		return portNumber;
 	}
 	
-	public List<Room> getRooms() {
-		return rooms;
+	public List<ClientWorker> getRooms() {
+		return clients;
 	}
 	
 	public void stopServer() throws IOException {

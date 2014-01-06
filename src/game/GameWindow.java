@@ -3,21 +3,26 @@ package game;
 import java.awt.Container;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+
+import client.logic.ClientLogic;
 
 public class GameWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Container pane;
 	private DrawingPanel canvas;
+	private ClientLogic clientLogic;
 	
-	public GameWindow() {
+	public GameWindow(ClientLogic clientLogic) {
+		this.clientLogic = clientLogic;
+		
 		// initialize components
 		pane = getContentPane();
-		canvas = new DrawingPanel();
-		
+		canvas = new DrawingPanel(clientLogic);
+		clientLogic.setDrawingPanel(canvas);
 		initUI(GameParameters.WINDOW_WIDTH, GameParameters.WINDOW_HEIGHT);
 		
 		setVisible(true);
+		clientLogic.start();
 	}
 	
 	private void initUI(int width, int height) {
@@ -29,14 +34,5 @@ public class GameWindow extends JFrame {
 		setLocationRelativeTo(null);
 		
 		pane.add(canvas);
-	}
-	
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new GameWindow();
-			}
-		});
 	}
 }
