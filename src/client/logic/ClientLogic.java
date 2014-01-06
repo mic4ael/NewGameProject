@@ -19,10 +19,13 @@ public class ClientLogic extends Thread {
 	@Override
 	public void run() {
 		isRunning = true;
+		System.out.println("Client Started");
 		
 		while (isRunning) {
 			
 		}
+		
+		System.out.println("Client Stopped");
 	}
 	
 	public String getHost() {

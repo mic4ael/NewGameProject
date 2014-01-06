@@ -2,14 +2,19 @@ package client.gui;
 
 import helperclasses.NoValueProvidedException;
 import helperclasses.WrongPortException;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+
 import client.logic.ClientLogic;
 
 public class ClientWindow extends JFrame {
@@ -37,10 +42,19 @@ public class ClientWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					validateInput();
+					
+					clientLogic = new ClientLogic(hostValue, portValue);
+					clientLogic.start();
+					
 				} catch (NoValueProvidedException e) {
 					JOptionPane.showMessageDialog(null, ClientParameters.NO_VALUES);
 				} catch (WrongPortException | NumberFormatException ex) {
 					JOptionPane.showMessageDialog(null, ClientParameters.WRONG_PORT);
+				} catch (UnknownHostException e) {
+					JOptionPane.showMessageDialog(null, ClientParameters.UNKNOWN_HOST);
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, ClientParameters.CONNECTION_ERROR);
 				} 
 			}
 		});
@@ -77,10 +91,14 @@ public class ClientWindow extends JFrame {
 	}
 	
 	private void initUI(int width, int height) {
+		// basic settings for the JFrame
 		setSize(width, height);
 		setTitle(ClientParameters.WINDOW_TITLE);
 		setLocationRelativeTo(null);
 		setResizable(ClientParameters.IS_RESIZABLE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// adding components
 		pane.setLayout(new BorderLayout());
 		pane.add(host, BorderLayout.NORTH);
 		pane.add(portNumber, BorderLayout.CENTER);

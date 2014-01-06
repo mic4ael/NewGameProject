@@ -32,22 +32,27 @@ public final class ServerLogic extends Thread {
 				break;
 		}
 		
-		System.out.println(ipAddress);
 		serverSocket = new ServerSocket();
 		
 		try {
 			serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
 		} catch  (BindException ex) {
-			
+			ex.printStackTrace();
 		}
 	}
 	
 	@Override
 	public void run() {
 		isRunning = true;
-		System.out.println("Server Started!");
+		System.out.println("Server Started! at " + ipAddress);
 		
 		while(isRunning) {
+			try {
+				serverSocket.accept();
+				System.out.println("Client Connected");
+			} catch (IOException e) {
+				break;
+			}
 		}
 		
 		System.out.println("Server Stopped!");
