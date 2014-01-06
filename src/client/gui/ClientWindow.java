@@ -1,12 +1,25 @@
 package client.gui;
 
+import helperclasses.NoValueProvidedException;
+import helperclasses.WrongPortException;
 import java.awt.BorderLayout;
 import java.awt.Container;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import client.logic.ClientLogic;
 
 public class ClientWindow extends JFrame {
 	private Container pane;
+	private JTextField host;
+	private JTextField portNumber;
+	private JButton connectButton;
+	private String hostValue = null;
+	private Integer portValue = null;
+	private ClientLogic clientLogic;
 	
 	public ClientWindow() {
 		this(ClientParameters.WINDOW_WIDTH, ClientParameters.WINDOW_HEIGHT);
@@ -15,11 +28,52 @@ public class ClientWindow extends JFrame {
 	public ClientWindow(int width, int height) {
 		// initialize components
 		pane = getContentPane();
-
-		// add components
+		host = new JTextField(ClientParameters.HOST_TEXT_FIELD);
+		portNumber = new JTextField(ClientParameters.PORT_NUMBER_TEXT_FIELD);
+		
+		connectButton = new JButton(ClientParameters.CONNECT_BUTTON);
+		connectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					validateInput();
+				} catch (NoValueProvidedException e) {
+					JOptionPane.showMessageDialog(null, ClientParameters.NO_VALUES);
+				} catch (WrongPortException | NumberFormatException ex) {
+					JOptionPane.showMessageDialog(null, ClientParameters.WRONG_PORT);
+				} 
+			}
+		});
+		
+		
+		// add components and general settings
 		initUI(width, height);
 		
 		setVisible(true);
+	}
+	
+	private void validateInput() throws NoValueProvidedException, WrongPortException {
+		validateHost();
+		validatePort();
+	}
+	
+	private void validateHost() throws NoValueProvidedException {
+		String address = host.getText();
+		
+		if (address == null || "".equals(address) || ClientParameters.HOST_TEXT_FIELD.equals(address))
+			throw new NoValueProvidedException();
+		
+		hostValue = address.trim();
+	}
+	
+	private void validatePort() throws WrongPortException {
+		Integer port = null;
+		port = Integer.parseInt(portNumber.getText(), 10);
+		
+		if (port < ClientParameters.MIN_PORT_NUMBER || port > ClientParameters.MAX_PORT_NUMBER)
+			throw new WrongPortException();
+		
+		portValue = port;
 	}
 	
 	private void initUI(int width, int height) {
@@ -27,6 +81,9 @@ public class ClientWindow extends JFrame {
 		setTitle(ClientParameters.WINDOW_TITLE);
 		setLocationRelativeTo(null);
 		setResizable(ClientParameters.IS_RESIZABLE);
-		setLayout(new BorderLayout());
+		pane.setLayout(new BorderLayout());
+		pane.add(host, BorderLayout.NORTH);
+		pane.add(portNumber, BorderLayout.CENTER);
+		pane.add(connectButton, BorderLayout.SOUTH);
 	}
 }
