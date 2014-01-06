@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.BindException;
-import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -66,7 +65,12 @@ public final class ServerLogic extends Thread {
 					}
 					
 				} catch (ClassNotFoundException | IOException e) {
-					e.printStackTrace();
+					try {
+						clientSocket.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					break;
 				}
 			}
 			
@@ -90,7 +94,7 @@ public final class ServerLogic extends Thread {
 		serverSocket = new ServerSocket();
 		
 		try {
-			serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
+			serverSocket.bind(new InetSocketAddress("192.168.40.252", portNumber));
 		} catch  (BindException ex) {
 			ex.printStackTrace();
 		}
@@ -124,7 +128,7 @@ public final class ServerLogic extends Thread {
 	}
 	
 	private void getLocalIp() throws UnknownHostException {
-		ipAddress = Inet4Address.getLocalHost().getHostAddress();
+		ipAddress = "localhost";
 	}
 	
 	public ServerSocket getServerSocket() {
