@@ -103,11 +103,12 @@ public class ServerWindow extends JFrame {
 						
 						if (!server.isRunning()) {
 							server.start();
-							setServerState();
+							server.setIsRunning(true);
 						} else {
 							JOptionPane.showMessageDialog(null, ServerParameters.ALREADY_STARTED);
 						}
-								
+						
+						setServerState();
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (WrongPortException | NumberFormatException ex) {
@@ -129,7 +130,6 @@ public class ServerWindow extends JFrame {
 	
 	private void setServerState() {
 		String state = ServerParameters.SERVER_STATE;
-		
 		serverState.setText(state + (server.isRunning() == true ? "running on port " + server.getPortNumber() : "stopped"));
 		serverState.repaint();
 	}

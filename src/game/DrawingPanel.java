@@ -1,11 +1,14 @@
 package game;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import server.logic.MessageType;
@@ -21,9 +24,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 	
 	public DrawingPanel(final ClientLogic clientLogic) {
 		this.clientLogic = clientLogic;
-		
+		setBorder(BorderFactory.createEtchedBorder());
 		// add drawing capability
-		addMouseMotionListener(this);
+		//addMouseMotionListener(this);
 	}
 	
 	public void enableCanvas(boolean isEnabled) {

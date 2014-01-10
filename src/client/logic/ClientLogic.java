@@ -1,6 +1,7 @@
 package client.logic;
 
 import game.DrawingPanel;
+import game.GameWindow;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,6 +20,7 @@ public class ClientLogic extends Thread {
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private DrawingPanel panel;
+	private GameWindow game;
 	
 	public ClientLogic(String host, int portNumber) throws UnknownHostException, IOException {
 		this.host = host;
@@ -51,7 +53,8 @@ public class ClientLogic extends Thread {
 					panel.setXY(msg.getX(), msg.getY());
 					break;
 				case DRAWING_TURN:
-					panel.setEnabled(true);
+					game.setDrawing("Kalala");
+					game.setDrawing(msg.getWord());
 				}
 				
 			} catch (ClassNotFoundException e) {
@@ -62,6 +65,10 @@ public class ClientLogic extends Thread {
 		}
 		
 		System.out.println("Client Stopped");
+	}
+	
+	public void setWindowGame(GameWindow game) {
+		this.game = game;
 	}
 	
 	public String getHost() {

@@ -1,5 +1,7 @@
 package server.logic;
 
+import game.WordGenerator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,7 +21,8 @@ public final class ServerLogic extends Thread {
 	private ServerSocket serverSocket;
 	private String ipAddress; // in case player wants to create a server available to the outside world
 	private int portNumber;
-	private volatile boolean isRunning = false;
+	private boolean isRunning = false;
+	private String currentWord;
 	
 	private class ClientWorker extends Thread {
 		private Socket clientSocket;
@@ -74,6 +77,7 @@ public final class ServerLogic extends Thread {
 				}
 			}
 			
+			clients.remove(this);
 			System.out.println("Client Worker stopped");
 		}
 	}
@@ -102,7 +106,10 @@ public final class ServerLogic extends Thread {
 	
 	@Override
 	public void run() {
-		isRunning = true;
+		synchronized(this) {
+			isRunning = true;
+		}
+		
 		System.out.println("Server Started! at " + ipAddress);
 		
 		while(isRunning) {
@@ -110,6 +117,12 @@ public final class ServerLogic extends Thread {
 				ClientWorker connectedClient = new ClientWorker(serverSocket.accept());
 				clients.add(connectedClient);
 				connectedClient.start();
+				
+				if (clients.size() == 2) {
+					int randomClient = (int)Math.round(Math.random());
+					currentWord = WordGenerator.nextWord();
+					clients.get(randomClient).sendToClient(new Message(MessageType.DRAWING_TURN, currentWord));
+				}
 				
 				System.out.println("Client Connected");
 			} catch (IOException e) {
@@ -146,14 +159,18 @@ public final class ServerLogic extends Thread {
 	public void stopServer() throws IOException {
 		isRunning = false;
 		
-		// stop all workers from communcating with the clients
+		// stop all workers from communicating with the clients
 		for(ClientWorker cl : clients)
 			cl.stopJob();
 		
 		serverSocket.close();
 	}
 	
-	public boolean isRunning() {
+	public synchronized boolean isRunning() {
 		return isRunning;
+	}
+	
+	public synchronized void setIsRunning(boolean is) {
+		isRunning = is;
 	}
 }

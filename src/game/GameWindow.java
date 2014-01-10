@@ -2,6 +2,9 @@ package game;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.security.Key;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -23,10 +26,30 @@ public class GameWindow extends JFrame {
 	public GameWindow(ClientLogic clientLogic) {
 		this.clientLogic = clientLogic;
 		message = new JTextField();
+		message.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent evt) {
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent evt) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+					System.out.println(message.getText().trim());
+				}
+			}
+		});
+		
 		wordToDraw = new JLabel(GameParameters.WORD_TO_DRAW);
 		wordToDraw.setBorder(BorderFactory.createEtchedBorder());
 		wordToDraw.setHorizontalAlignment(JLabel.CENTER);
 		wordToDraw.setVisible(false);
+		clientLogic.setWindowGame(this);
 		
 		// initialize components
 		pane = getContentPane();
@@ -41,6 +64,7 @@ public class GameWindow extends JFrame {
 	public void setDrawing(String wordToDraw) {
 		this.wordToDraw.setText(GameParameters.WORD_TO_DRAW + wordToDraw);
 		this.wordToDraw.setVisible(true);
+		this.canvas.enableCanvas(true);
 	}
 	
 	private void initUI(int width, int height) {
