@@ -5,6 +5,7 @@ import java.awt.Color;
 public interface GameParameters {
 	// Strings
 	public static final String GAME_WINDOW_TITLE = "Game by mic4ael v.0.1";
+	public static final String WORD_TO_DRAW = "Current word to draw: ";
 	
 	// boolean
 	public static final boolean IS_RESIZABLE = false;

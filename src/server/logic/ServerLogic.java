@@ -35,9 +35,11 @@ public final class ServerLogic extends Thread {
 		
 		private void sendToClient(Message msg) {
 			try {
-				this.outObject.writeObject(msg);
+				synchronized(this.getClass()) {
+					this.outObject.writeObject(msg);
+				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				clients.remove(this);
 			}
 		}
 		
@@ -48,6 +50,7 @@ public final class ServerLogic extends Thread {
 		
 		public void stopJob() {
 			isRunning = false;
+			clients.remove(this);
 		}
 		
 		@Override
@@ -59,10 +62,7 @@ public final class ServerLogic extends Thread {
 				try {
 					msg = (Message)inObject.readObject();
 					
-					switch(msg.getMessageType()) {
-					case DRAW:
-						send(msg);
-					}
+					send(msg);
 					
 				} catch (ClassNotFoundException | IOException e) {
 					try {
@@ -94,7 +94,7 @@ public final class ServerLogic extends Thread {
 		serverSocket = new ServerSocket();
 		
 		try {
-			serverSocket.bind(new InetSocketAddress("192.168.40.252", portNumber));
+			serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
 		} catch  (BindException ex) {
 			ex.printStackTrace();
 		}

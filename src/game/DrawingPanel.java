@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import server.logic.MessageType;
 import client.logic.ClientLogic;
 
-public class DrawingPanel extends JPanel {
+public class DrawingPanel extends JPanel implements MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	private Image buffer;
 	private Graphics offscreenG;
@@ -23,24 +23,12 @@ public class DrawingPanel extends JPanel {
 		this.clientLogic = clientLogic;
 		
 		// add drawing capability
-		addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseMoved(MouseEvent evt) {};
-			
-			@Override
-			public void mouseDragged(MouseEvent evt) {
-				curX = evt.getX();
-				curY = evt.getY();
-				
-				try {
-					clientLogic.sendMessage(MessageType.DRAW, evt.getX(), evt.getY());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				repaint();
-			}
-		});
+		addMouseMotionListener(this);
+	}
+	
+	public void enableCanvas(boolean isEnabled) {
+		if(isEnabled) addMouseMotionListener(this);
+		else removeMouseMotionListener(this);
 	}
 	
 	public synchronized void setXY(int x, int y) {
@@ -69,5 +57,24 @@ public class DrawingPanel extends JPanel {
 			offscreenG.drawRect(curX, curY, 1, 1);
 		
 		g.drawImage(buffer, 0, 0, null);
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent evt) {
+		curX = evt.getX();
+		curY = evt.getY();
+		
+		try {
+			clientLogic.sendMessage(MessageType.DRAW, evt.getX(), evt.getY());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		repaint();
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent evt) {
 	}
 }

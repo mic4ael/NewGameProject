@@ -1,5 +1,5 @@
 package server.logic;
 
 public enum MessageType {
-	DRAW;
+	DRAW, DRAWING_TURN;
 }

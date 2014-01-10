@@ -50,6 +50,8 @@ public class ClientLogic extends Thread {
 				case DRAW:
 					panel.setXY(msg.getX(), msg.getY());
 					break;
+				case DRAWING_TURN:
+					panel.setEnabled(true);
 				}
 				
 			} catch (ClassNotFoundException e) {
