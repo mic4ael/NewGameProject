@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.security.Key;
 
 import javax.swing.BorderFactory;
@@ -13,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import server.logic.MessageType;
 import client.logic.ClientLogic;
 
 public class GameWindow extends JFrame {
@@ -23,7 +25,7 @@ public class GameWindow extends JFrame {
 	private JTextField message;
 	private JLabel wordToDraw;
 	
-	public GameWindow(ClientLogic clientLogic) {
+	public GameWindow(final ClientLogic clientLogic) {
 		this.clientLogic = clientLogic;
 		message = new JTextField();
 		message.addKeyListener(new KeyListener() {
@@ -40,7 +42,11 @@ public class GameWindow extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent evt) {
 				if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-					System.out.println(message.getText().trim());
+					try {
+						clientLogic.sendMessage(MessageType.ANSWER, message.getText().trim());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
@@ -59,6 +65,11 @@ public class GameWindow extends JFrame {
 		
 		setVisible(true);
 		clientLogic.start();
+	}
+	
+	public void disableDrawing() {
+		this.canvas.enableCanvas(false);
+		wordToDraw.setVisible(false);
 	}
 	
 	public void setDrawing(String wordToDraw) {

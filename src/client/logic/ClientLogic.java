@@ -38,6 +38,10 @@ public class ClientLogic extends Thread {
 		out.writeObject(new Message(msgType, x, y));
 	}
 	
+	public void sendMessage(MessageType msgType, String word) throws IOException {
+		out.writeObject(new Message(msgType, word));
+	}
+	
 	@Override
 	public void run() {
 		isRunning = true;
@@ -53,8 +57,12 @@ public class ClientLogic extends Thread {
 					panel.setXY(msg.getX(), msg.getY());
 					break;
 				case DRAWING_TURN:
-					game.setDrawing("Kalala");
 					game.setDrawing(msg.getWord());
+					break;
+				case DISABLE:
+					game.disableDrawing();
+					break;
+				case ANSWER:
 				}
 				
 			} catch (ClassNotFoundException e) {

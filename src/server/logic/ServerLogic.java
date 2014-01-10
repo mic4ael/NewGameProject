@@ -1,5 +1,6 @@
 package server.logic;
 
+import game.GameWindow;
 import game.WordGenerator;
 
 import java.io.BufferedReader;
@@ -56,6 +57,21 @@ public final class ServerLogic extends Thread {
 			clients.remove(this);
 		}
 		
+		private boolean checkIfCorrect(String word) {
+			return word.equals(currentWord);
+		}
+		
+		private synchronized void changeDrawingPlayer() {
+			// enable drawing at the client who guessed the answer
+			currentWord = WordGenerator.nextWord();
+			this.sendToClient(new Message(MessageType.DRAWING_TURN, currentWord));
+			
+			for(ClientWorker i : clients) {
+				if (i != this)
+					i.sendToClient(new Message(MessageType.DISABLE));
+			}
+		}
+		
 		@Override
 		public void run() {
 			System.out.println("Client Worker started");
@@ -65,7 +81,15 @@ public final class ServerLogic extends Thread {
 				try {
 					msg = (Message)inObject.readObject();
 					
-					send(msg);
+					switch(msg.getMessageType()) {
+					case DRAW:
+						send(msg);
+						break;
+					case ANSWER:
+						if (checkIfCorrect(msg.getWord()))
+							changeDrawingPlayer();
+					}
+					
 					
 				} catch (ClassNotFoundException | IOException e) {
 					try {

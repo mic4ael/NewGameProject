@@ -8,6 +8,10 @@ public class Message implements Serializable {
 	private int x;
 	private int y;
 	
+	public Message(MessageType msgType) {
+		this.msgType = msgType;
+	}
+	
 	public Message(MessageType msgType, String word) {
 		this.msgType = msgType;
 		this.word = word;
