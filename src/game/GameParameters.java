@@ -12,7 +12,7 @@ public interface GameParameters {
 	
 	// integers
 	public static final int WINDOW_WIDTH = 480;
-	public static final int WINDOW_HEIGHT = 640;
+	public static final int WINDOW_HEIGHT = 480;
 	
 	// other
 	public static final Color DRAWING_PANEL_BG = Color.LIGHT_GRAY;

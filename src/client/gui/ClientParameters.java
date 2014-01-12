@@ -15,7 +15,7 @@ public interface ClientParameters {
 	public static final boolean IS_RESIZABLE = false;
 	
 	// integers
-	public static final int WINDOW_WIDTH = 480;
+	public static final int WINDOW_WIDTH = 200;
 	public static final int WINDOW_HEIGHT = 100;
 	public static final int MAX_PORT_NUMBER = 65535;
 	public static final int MIN_PORT_NUMBER = 1024;
