@@ -1,6 +1,5 @@
 package server.logic;
 
-import game.GameWindow;
 import game.WordGenerator;
 
 import java.io.BufferedReader;
@@ -9,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.BindException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -119,13 +119,13 @@ public final class ServerLogic extends Thread {
 				break;
 		}
 		
-		serverSocket = new ServerSocket();
+		serverSocket = new ServerSocket(portNumber);
 		
-		try {
+		/*try {
 			serverSocket.bind(new InetSocketAddress(ipAddress, portNumber));
 		} catch  (BindException ex) {
 			ex.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Override
@@ -165,7 +165,7 @@ public final class ServerLogic extends Thread {
 	}
 	
 	private void getLocalIp() throws UnknownHostException {
-		ipAddress = "localhost";
+		ipAddress = "192.168.40.252";
 	}
 	
 	public ServerSocket getServerSocket() {

@@ -7,6 +7,7 @@ public class Message implements Serializable {
 	private String word;
 	private int x;
 	private int y;
+	private boolean isRightClicked;
 	
 	public Message(MessageType msgType) {
 		this.msgType = msgType;
@@ -39,5 +40,13 @@ public class Message implements Serializable {
 	
 	public MessageType getMessageType() {
 		return msgType;
+	}
+
+	public boolean isRightClicked() {
+		return isRightClicked;
+	}
+
+	public void setRightClicked(boolean isRightClicked) {
+		this.isRightClicked = isRightClicked;
 	}
 }
