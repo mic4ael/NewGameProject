@@ -37,7 +37,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 		repaint();
 	}
 	
-	public synchronized void setXY(int x, int y, boolean isRight) {
+	public void setXY(int x, int y, boolean isRight) {
 		curX = x;
 		curY = y;
 		this.buttonClicked = isRight;
