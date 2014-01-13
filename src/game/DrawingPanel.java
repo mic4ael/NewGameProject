@@ -50,6 +50,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 		paint(g);
 	}
 	
+	// TODO: make much smoother drawing by drawing lines instead of dots
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
