@@ -7,6 +7,8 @@ public class Message implements Serializable {
 	private String word;
 	private int x;
 	private int y;
+	private int oldX;
+	private int oldY;
 	private boolean isRightClicked;
 	
 	public Message(MessageType msgType) {
@@ -20,10 +22,12 @@ public class Message implements Serializable {
 		this.y = -1;
 	}
 	
-	public Message(MessageType msgType, int x, int y) {
+	public Message(MessageType msgType, int x, int y, int oldX, int oldY) {
 		this(msgType, "");
 		this.x = x;
 		this.y = y;
+		this.oldX = oldX;
+		this.oldY = oldY;
 	}
 	
 	public String getWord() {
@@ -36,6 +40,14 @@ public class Message implements Serializable {
 	
 	public int getY() {
 		return y;
+	}
+	
+	public int getOldX() {
+		return oldX;
+	}
+	
+	public int getOldY() {
+		return oldY;
 	}
 	
 	public MessageType getMessageType() {

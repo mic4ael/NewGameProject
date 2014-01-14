@@ -1,7 +1,9 @@
 package game;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -17,9 +19,11 @@ import client.logic.ClientLogic;
 public class DrawingPanel extends JPanel implements MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	private Image buffer;
-	private Graphics offscreenG;
+	private Graphics2D offscreenG;
 	private int curX = -1; // on first repaint there is a dot at (0,0), so this is to prevent it
 	private int curY = -1;
+	private int oldX = 0;
+	private int oldY = 0;
 	private ClientLogic clientLogic;
 	private boolean buttonClicked;
 	
@@ -37,7 +41,9 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 		repaint();
 	}
 	
-	public void setXY(int x, int y, boolean isRight) {
+	public void setXY(int x, int y, int oldX, int oldY, boolean isRight) {
+		this.oldX = oldX;
+		this.oldY = oldY;
 		curX = x;
 		curY = y;
 		this.buttonClicked = isRight;
@@ -58,7 +64,7 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 		// apply double buffering to obtain smooth animations
 		if (buffer == null) {
 			buffer = createImage(this.getWidth(), this.getHeight());
-			offscreenG = buffer.getGraphics();
+			offscreenG = (Graphics2D)buffer.getGraphics();
 		}
 		
 		if (curX != -1 && curY != -1) {
@@ -67,7 +73,14 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 				offscreenG.fillRect(curX, curY, 10, 10);
 				offscreenG.setColor(Color.BLACK);
 			} else {
-				offscreenG.drawRect(curX, curY, 1, 1);
+				offscreenG.setStroke(new BasicStroke(3));
+				
+				if (oldX == -1 && oldY == -1) {
+					oldX = curX + 1;
+					oldY = curY + 1;
+				}
+				
+				offscreenG.drawLine(oldX, oldY, curX, curY);
 			}
 		}
 		
@@ -76,21 +89,25 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 
 	@Override
 	public void mouseDragged(MouseEvent evt) {
+		oldX = curX;
+		oldY = curY;
 		curX = evt.getX();
 		curY = evt.getY();
+		
 		buttonClicked = SwingUtilities.isRightMouseButton(evt);
 		
 		try {
-			clientLogic.sendMessage(MessageType.DRAW, evt.getX(), evt.getY(), buttonClicked);
+			clientLogic.sendMessage(MessageType.DRAW, evt.getX(), evt.getY(), oldX, oldY, buttonClicked);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		repaint();
-		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent evt) {
+		curX = evt.getX();
+		curY = evt.getY();
 	}
 }

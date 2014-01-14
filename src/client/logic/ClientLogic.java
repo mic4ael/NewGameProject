@@ -34,8 +34,8 @@ public class ClientLogic extends Thread {
 		this.panel = panel;
 	}
 	
-	public void sendMessage(MessageType msgType, int x, int y, boolean isRightclicked) throws IOException {
-		Message msg = new Message(msgType, x, y);
+	public void sendMessage(MessageType msgType, int x, int y, int oldX, int oldY, boolean isRightclicked) throws IOException {
+		Message msg = new Message(msgType, x, y, oldX, oldY);
 		msg.setRightClicked(isRightclicked);
 		
 		out.writeObject(msg);
@@ -57,7 +57,7 @@ public class ClientLogic extends Thread {
 				
 				switch(msg.getMessageType()) {
 				case DRAW:
-					panel.setXY(msg.getX(), msg.getY(), msg.isRightClicked());
+					panel.setXY(msg.getX(), msg.getY(), msg.getOldX(), msg.getOldY(), msg.isRightClicked());
 					break;
 				case DRAWING_TURN:
 					game.setDrawing(msg.getWord());
