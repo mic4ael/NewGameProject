@@ -39,9 +39,7 @@ public final class ServerLogic extends Thread {
 		
 		private void sendToClient(Message msg) {
 			try {
-				synchronized(this.getClass()) {
-					this.outObject.writeObject(msg);
-				}
+				this.outObject.writeObject(msg);
 			} catch (IOException e) {
 				clients.remove(this);
 			}

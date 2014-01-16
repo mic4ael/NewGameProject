@@ -36,7 +36,14 @@ public class DrawingPanel extends JPanel implements MouseMotionListener {
 	
 	public void enableCanvas(boolean isEnabled) {
 		if(isEnabled) addMouseMotionListener(this);
-		else removeMouseMotionListener(this);
+		else {
+			removeMouseMotionListener(this);
+			curX = -1;
+			curY = -1;
+			oldX = -1;
+			oldY = -1;
+		}
+		
 		buffer = null;
 		repaint();
 	}

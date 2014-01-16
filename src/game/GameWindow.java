@@ -70,12 +70,14 @@ public class GameWindow extends JFrame {
 	public void disableDrawing() {
 		this.canvas.enableCanvas(false);
 		wordToDraw.setVisible(false);
+		message.setVisible(true);
 	}
 	
 	public void setDrawing(String wordToDraw) {
 		this.wordToDraw.setText(GameParameters.WORD_TO_DRAW + wordToDraw);
 		this.wordToDraw.setVisible(true);
 		this.canvas.enableCanvas(true);
+		message.setVisible(false);
 	}
 	
 	private void initUI(int width, int height) {
